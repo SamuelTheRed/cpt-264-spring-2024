@@ -1,4 +1,4 @@
-var UserBox = React.createClass({ // --v
+var UserBox = React.createClass({
     handleUserSubmit: function (user) {
 
         $.ajax({
@@ -13,7 +13,7 @@ var UserBox = React.createClass({ // --v
                 console.error(this.props.url, status, err.toString());
             }.bind(this)
         });
-    }, // --^
+    },
     render: function () {
         return (
             <div className="UserBox">
@@ -34,7 +34,6 @@ var Userform = React.createClass({
             useremail: ""
         };
     },
-    // --v
     handleSubmit: function (e) {
         
         e.preventDefault();
@@ -67,7 +66,7 @@ var Userform = React.createClass({
             useremail: useremail
         });
 
-    }, // --^
+    },
     validateEmail: function (value) {
         var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(value);
@@ -270,9 +269,9 @@ var TextInput = React.createClass({
         } else {
             return (
                 <div className={this.props.uniqueName}>
-                    <input // --v
+                    <input
                         name={this.props.uniqueName}
-                        id={this.props.uniqueName} // --^
+                        id={this.props.uniqueName}
                         placeholder={this.props.text}
                         className={'input input-' + this.props.uniqueName}
                         onChange={this.handleChange}
