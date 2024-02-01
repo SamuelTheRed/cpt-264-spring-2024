@@ -1,6 +1,62 @@
+div.logo {
+  width: 100%;
+  height: 75px;
+  background-color: #eef;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0px;
+}
+  .logo img {
+    height: 75px;
+  }
+
+nav {
+  height: 50px;
+  width: 100%;
+  background-color: #000a;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+  nav a {
+    background-color: #fff2;
+    padding: 4px 8px;
+    border-radius: 5pt;
+    text-decoration: none;
+    color: white;
+    height: 20px;
+  }
+
 h2 {
-    background-color: #b0e6e6;
-    color: #237b7b;
-    font-family: Georgia, "Times New Roman", serif;
-    text-align: center;
+  background-color: #b0e6e6;
+  color: #237b7b;
+  font-family: Georgia, "Times New Roman", serif;
+  text-align: center;
+}
+
+div.golfmap {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-around;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: row;
+  padding: 20px;
+}
+  .golfmap a {
+    box-sizing: border-box;
+    width: 40%;
+    min-width: 500px;
+    height: 500px;
+    margin: 20px;
+    border-radius: 50pt;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
   }
