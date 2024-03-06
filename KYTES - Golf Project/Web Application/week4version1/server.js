@@ -30,8 +30,59 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 /*
- * Selects All From Users in DB
+ * 
+ * POST API CALLS
+ * 
  */
+
+// Login
+app.post("/loginuser/", function (req, res) {
+    var uemail = req.body.useremail;
+    var upw = req.body.userpw;
+
+    var sqlsel = "select * from users where dbuseremail = ?";
+
+    var inserts = [uemail];
+
+    var sql = mysql.format(sqlsel, inserts);
+    console.log("SQL: " + sql);
+    con.query(sql, function (err, data) {
+        if (data.length > 0) {
+            console.log("User Name Correct:");
+            console.log(data[0].dbuserpassword);
+            bcrypt.compare(
+                upw,
+                data[0].dbuserpassword,
+                function (err, passwordCorrect) {
+                    if (err) {
+                        throw err;
+                    } else if (!passwordCorrect) {
+                        console.log("Password incorrect");
+                    } else {
+                        console.log("Password correct");
+                        res.send({ redirect: "./backend/" });
+                    }
+                }
+            );
+        } else {
+            console.log("Incorrect user name or password");
+        }
+    });
+});
+
+/*
+ * 
+ * GET DROPDOWN DATA
+ * 
+ */
+
+/*
+ * 
+ * GET ALL TABLE INFO
+ * 
+ */
+
+// Users from DB
 app.get('/getusers/', function (req, res) {
 
     var sqlsel = 'select * from users';
