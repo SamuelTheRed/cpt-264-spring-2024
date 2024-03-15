@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 15, 2024 at 09:18 AM
+-- Generation Time: Mar 15, 2024 at 10:20 AM
 -- Server version: 5.7.23-23
 -- PHP Version: 8.1.27
 
@@ -63,6 +63,13 @@ CREATE TABLE `Players` (
   `dbplayer_password` varchar(128) COLLATE utf8_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Dumping data for table `Players`
+--
+
+INSERT INTO `Players` (`dbplayer_id`, `dbplayer_firstname`, `dbplayer_lastname`, `dbplayer_email`, `dbplayer_phone`, `dbplayer_rewardstier`, `dbplayer_password`) VALUES
+(1, NULL, 'test', 'test@test.com', NULL, NULL, 'test');
+
 -- --------------------------------------------------------
 
 --
@@ -110,6 +117,14 @@ CREATE TABLE `Reservations` (
   `dbuser_id` int(11) NOT NULL COMMENT 'FK for User'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Dumping data for table `Reservations`
+--
+
+INSERT INTO `Reservations` (`dbreservation_id`, `dbreservation_datetime`, `dbplayer_id`, `dbuser_id`) VALUES
+(2, '2024-03-18 10:00:00', 1, 1),
+(3, '2024-03-20 10:00:00', 1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -118,13 +133,20 @@ CREATE TABLE `Reservations` (
 
 CREATE TABLE `Users` (
   `dbuser_id` int(11) NOT NULL,
-  `dbuser_firstname` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `dbuser_firstname` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
   `dbuser_lastname` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `dbuser_email` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
   `dbuser_phone` int(10) DEFAULT NULL,
   `dbuser_password` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
   `dbuser_role` varchar(16) COLLATE utf8_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `Users`
+--
+
+INSERT INTO `Users` (`dbuser_id`, `dbuser_firstname`, `dbuser_lastname`, `dbuser_email`, `dbuser_phone`, `dbuser_password`, `dbuser_role`) VALUES
+(1, 'test', NULL, 'testuser@test.com', NULL, 'test', 'admin');
 
 --
 -- Indexes for dumped tables
@@ -169,7 +191,7 @@ ALTER TABLE `Purchases`
 --
 ALTER TABLE `Reservations`
   ADD PRIMARY KEY (`dbreservation_id`),
-  ADD KEY `dbplayer_id` (`dbplayer_id`),
+  ADD KEY `dbplayer_id` (`dbplayer_id`,`dbuser_id`),
   ADD KEY `dbuser_id` (`dbuser_id`);
 
 --
@@ -198,7 +220,7 @@ ALTER TABLE `Orders`
 -- AUTO_INCREMENT for table `Players`
 --
 ALTER TABLE `Players`
-  MODIFY `dbplayer_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `dbplayer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `Products`
@@ -210,13 +232,13 @@ ALTER TABLE `Products`
 -- AUTO_INCREMENT for table `Reservations`
 --
 ALTER TABLE `Reservations`
-  MODIFY `dbreservation_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `dbreservation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `Users`
 --
 ALTER TABLE `Users`
-  MODIFY `dbuser_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `dbuser_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -246,8 +268,8 @@ ALTER TABLE `Purchases`
 -- Constraints for table `Reservations`
 --
 ALTER TABLE `Reservations`
-  ADD CONSTRAINT `Reservations_ibfk_1` FOREIGN KEY (`dbplayer_id`) REFERENCES `Players` (`dbplayer_id`),
-  ADD CONSTRAINT `Reservations_ibfk_2` FOREIGN KEY (`dbuser_id`) REFERENCES `Users` (`dbuser_id`);
+  ADD CONSTRAINT `Reservations_ibfk_1` FOREIGN KEY (`dbuser_id`) REFERENCES `Users` (`dbuser_id`),
+  ADD CONSTRAINT `Reservations_ibfk_2` FOREIGN KEY (`dbplayer_id`) REFERENCES `Players` (`dbplayer_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
