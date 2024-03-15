@@ -1,74 +1,247 @@
--- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
 --
--- Host: localhost    Database: golfdb
--- ------------------------------------------------------
--- Server version	8.0.35
+-- Host: localhost:3306
+-- Generation Time: Mar 15, 2024 at 08:56 AM
+-- Server version: 5.7.23-23
+-- PHP Version: 8.1.27
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
--- Table structure for table `menuitems`
+-- Database: `sshell18_cpt262_fall2024_final`
 --
 
-DROP TABLE IF EXISTS `menuitems`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `menuitems` (
-  `menuitemsid` int NOT NULL,
-  `menuitemname` varchar(45) NOT NULL,
-  PRIMARY KEY (`menuitemsid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `menuitems`
+-- Table structure for table `OrderItems`
 --
 
-LOCK TABLES `menuitems` WRITE;
-/*!40000 ALTER TABLE `menuitems` DISABLE KEYS */;
-/*!40000 ALTER TABLE `menuitems` ENABLE KEYS */;
-UNLOCK TABLES;
+CREATE TABLE `OrderItems` (
+  `dborderitem_id` int(11) NOT NULL,
+  `dbproduct_id` int(11) NOT NULL COMMENT 'FK for Product',
+  `dborder_id` int(11) NOT NULL COMMENT 'FK for Order',
+  `dborderitem_quantity` int(8) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Table structure for table `Orders`
 --
 
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `users` (
-  `dbuserid` int NOT NULL AUTO_INCREMENT,
-  `dbusername` varchar(30) NOT NULL,
-  PRIMARY KEY (`dbuserid`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE `Orders` (
+  `dborder_id` int(11) NOT NULL,
+  `dborder_datetime` datetime DEFAULT NULL,
+  `dbplayer_id` int(11) NOT NULL COMMENT 'FK for Player',
+  `dbuser_id` int(11) NOT NULL COMMENT 'FK for User'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `users`
+-- Table structure for table `Players`
 --
 
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'usr-FFF'),(2,'usr-001');
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+CREATE TABLE `Players` (
+  `dbplayer_id` int(11) NOT NULL,
+  `dbplayer_firstname` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `dbplayer_lastname` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `dbplayer_email` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `dbplayer_phone` int(10) DEFAULT NULL,
+  `dbplayer_rewardstier` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `dbplayer_password` varchar(128) COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Products`
+--
+
+CREATE TABLE `Products` (
+  `dbproduct_id` int(11) NOT NULL,
+  `dbproduct_name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `dbproduct_description` text COLLATE utf8_unicode_ci,
+  `dbproduct_price` double(10,2) DEFAULT NULL,
+  `dbproduct_quantity` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Purchases`
+--
+
+CREATE TABLE `Purchases` (
+  `dborder_id` int(11) NOT NULL COMMENT 'FK for Order',
+  `dbpurchase_status` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `dbpurchase_datetimefulfilled` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Reservations`
+--
+
+CREATE TABLE `Reservations` (
+  `dbreservation_id` int(11) NOT NULL,
+  `dbreservation_datetime` datetime DEFAULT NULL,
+  `dbplayer_id` int(11) NOT NULL COMMENT 'FK for Player',
+  `dbuser_id` int(11) NOT NULL COMMENT 'FK for User'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Users`
+--
+
+CREATE TABLE `Users` (
+  `dbuser_id` int(11) NOT NULL,
+  `dbuser_firstname` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `dbuser_lastname` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `dbuser_email` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `dbuser_phone` int(10) DEFAULT NULL,
+  `dbuser_password` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
+  `dbuser_role` varchar(16) COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `OrderItems`
+--
+ALTER TABLE `OrderItems`
+  ADD PRIMARY KEY (`dborderitem_id`),
+  ADD KEY `dbproduct_id` (`dbproduct_id`),
+  ADD KEY `dborder_id` (`dborder_id`);
+
+--
+-- Indexes for table `Orders`
+--
+ALTER TABLE `Orders`
+  ADD PRIMARY KEY (`dborder_id`),
+  ADD KEY `dbplayer_id` (`dbplayer_id`),
+  ADD KEY `dbuser_id` (`dbuser_id`);
+
+--
+-- Indexes for table `Players`
+--
+ALTER TABLE `Players`
+  ADD PRIMARY KEY (`dbplayer_id`);
+
+--
+-- Indexes for table `Products`
+--
+ALTER TABLE `Products`
+  ADD PRIMARY KEY (`dbproduct_id`);
+
+--
+-- Indexes for table `Purchases`
+--
+ALTER TABLE `Purchases`
+  ADD PRIMARY KEY (`dborder_id`);
+
+--
+-- Indexes for table `Reservations`
+--
+ALTER TABLE `Reservations`
+  ADD PRIMARY KEY (`dbreservation_id`),
+  ADD KEY `dbplayer_id` (`dbplayer_id`),
+  ADD KEY `dbuser_id` (`dbuser_id`);
+
+--
+-- Indexes for table `Users`
+--
+ALTER TABLE `Users`
+  ADD PRIMARY KEY (`dbuser_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `OrderItems`
+--
+ALTER TABLE `OrderItems`
+  MODIFY `dborderitem_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `Orders`
+--
+ALTER TABLE `Orders`
+  MODIFY `dborder_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `Players`
+--
+ALTER TABLE `Players`
+  MODIFY `dbplayer_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `Products`
+--
+ALTER TABLE `Products`
+  MODIFY `dbproduct_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `Reservations`
+--
+ALTER TABLE `Reservations`
+  MODIFY `dbreservation_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `Users`
+--
+ALTER TABLE `Users`
+  MODIFY `dbuser_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `OrderItems`
+--
+ALTER TABLE `OrderItems`
+  ADD CONSTRAINT `OrderItems_ibfk_1` FOREIGN KEY (`dborder_id`) REFERENCES `Orders` (`dborder_id`),
+  ADD CONSTRAINT `OrderItems_ibfk_2` FOREIGN KEY (`dbproduct_id`) REFERENCES `Products` (`dbproduct_id`);
+
+--
+-- Constraints for table `Orders`
+--
+ALTER TABLE `Orders`
+  ADD CONSTRAINT `Orders_ibfk_1` FOREIGN KEY (`dbplayer_id`) REFERENCES `Players` (`dbplayer_id`),
+  ADD CONSTRAINT `Orders_ibfk_2` FOREIGN KEY (`dbuser_id`) REFERENCES `Users` (`dbuser_id`);
+
+--
+-- Constraints for table `Purchases`
+--
+ALTER TABLE `Purchases`
+  ADD CONSTRAINT `Purchases_ibfk_1` FOREIGN KEY (`dborder_id`) REFERENCES `Orders` (`dborder_id`);
+
+--
+-- Constraints for table `Reservations`
+--
+ALTER TABLE `Reservations`
+  ADD CONSTRAINT `Reservations_ibfk_1` FOREIGN KEY (`dbplayer_id`) REFERENCES `Players` (`dbplayer_id`),
+  ADD CONSTRAINT `Reservations_ibfk_2` FOREIGN KEY (`dbuser_id`) REFERENCES `Users` (`dbuser_id`);
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2024-01-26 15:32:29
