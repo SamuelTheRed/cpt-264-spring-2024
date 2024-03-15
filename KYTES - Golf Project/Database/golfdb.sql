@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 15, 2024 at 08:56 AM
+-- Generation Time: Mar 15, 2024 at 09:18 AM
 -- Server version: 5.7.23-23
 -- PHP Version: 8.1.27
 
@@ -76,6 +76,14 @@ CREATE TABLE `Products` (
   `dbproduct_price` double(10,2) DEFAULT NULL,
   `dbproduct_quantity` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `Products`
+--
+
+INSERT INTO `Products` (`dbproduct_id`, `dbproduct_name`, `dbproduct_description`, `dbproduct_price`, `dbproduct_quantity`) VALUES
+(1, 'test-product', 'This is a test product; this will be used for test queries.', 99.99, 500),
+(2, 'test-product2', 'This is a test product as well; this will also be used for test queries.', 149.99, 300);
 
 -- --------------------------------------------------------
 
@@ -196,7 +204,7 @@ ALTER TABLE `Players`
 -- AUTO_INCREMENT for table `Products`
 --
 ALTER TABLE `Products`
-  MODIFY `dbproduct_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `dbproduct_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `Reservations`
