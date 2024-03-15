@@ -1,1 +1,0 @@
-Do not auto format CSS files
