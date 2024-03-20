@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 15, 2024 at 10:20 AM
+-- Generation Time: Mar 20, 2024 at 11:56 AM
 -- Server version: 5.7.23-23
 -- PHP Version: 8.1.27
 
@@ -68,7 +68,7 @@ CREATE TABLE `Players` (
 --
 
 INSERT INTO `Players` (`dbplayer_id`, `dbplayer_firstname`, `dbplayer_lastname`, `dbplayer_email`, `dbplayer_phone`, `dbplayer_rewardstier`, `dbplayer_password`) VALUES
-(1, NULL, 'test', 'test@test.com', NULL, NULL, 'test');
+(1, 'testplayer', 'testplayer', 'testplayer@testplayer.com', NULL, NULL, 'password');
 
 -- --------------------------------------------------------
 
@@ -123,7 +123,9 @@ CREATE TABLE `Reservations` (
 
 INSERT INTO `Reservations` (`dbreservation_id`, `dbreservation_datetime`, `dbplayer_id`, `dbuser_id`) VALUES
 (2, '2024-03-18 10:00:00', 1, 1),
-(3, '2024-03-20 10:00:00', 1, 1);
+(3, '2024-03-20 10:00:00', 1, 1),
+(5, '2024-04-16 10:00:00', 1, 2),
+(6, '2024-03-25 10:08:00', 1, 2);
 
 -- --------------------------------------------------------
 
@@ -146,7 +148,8 @@ CREATE TABLE `Users` (
 --
 
 INSERT INTO `Users` (`dbuser_id`, `dbuser_firstname`, `dbuser_lastname`, `dbuser_email`, `dbuser_phone`, `dbuser_password`, `dbuser_role`) VALUES
-(1, 'test', NULL, 'testuser@test.com', NULL, 'test', 'admin');
+(1, 'testuser', 'testuser', 'testuser@test.com', NULL, 'password', 'admin'),
+(2, 'self reservation', 'self reservation', 'void@void.com', NULL, 'password', '');
 
 --
 -- Indexes for dumped tables
@@ -232,13 +235,13 @@ ALTER TABLE `Products`
 -- AUTO_INCREMENT for table `Reservations`
 --
 ALTER TABLE `Reservations`
-  MODIFY `dbreservation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `dbreservation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `Users`
 --
 ALTER TABLE `Users`
-  MODIFY `dbuser_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `dbuser_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
