@@ -363,8 +363,8 @@ var TimeInput = React.createClass({
           onBlur={this.handleBlur}
           value={this.props.value}
           step="480"
-          min="10:00"
-          max="18:00"
+          min="08:00"
+          max="16:00"
         />
 
         <InputError

@@ -1,4 +1,6 @@
+// Create Reservation Box
 var ReservationBox = React.createClass({
+  // Submit information to database
   handleReservationSubmit: function (reservation) {
     $.ajax({
       url: "/reservation",
@@ -13,6 +15,7 @@ var ReservationBox = React.createClass({
       }.bind(this),
     });
   },
+  // Render the Box onto HTML Page
   render: function () {
     return (
       <div className="ReservationBox">
@@ -25,46 +28,52 @@ var ReservationBox = React.createClass({
   },
 });
 
+// Create Reservation Form
 var Reservationform = React.createClass({
+  // Create Variables
   getInitialState: function () {
     return {
-      reservationdate: "",
-      reservationtime: "",
-      plrdata: [],
-      usrdata: [],
+      reservationdateSS: "",
+      reservationtimeSS: "",
+      plrdataSS: [],
+      usrdataSS: [],
     };
   },
+  // Handle the change when user interact with radio button
   handleOptionChange: function (e) {
     this.setState({
       selectedOption: e.target.value,
     });
   },
+  // Load Player Data
   loadPlrData: function () {
     $.ajax({
       url: "/getplrdata",
       dataType: "json",
       cache: false,
       success: function (plrdata) {
-        this.setState({ plrdata: plrdata });
+        this.setState({ plrdataSS: plrdata });
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
       }.bind(this),
     });
   },
+  // Load User Data
   loadUsrData: function () {
     $.ajax({
       url: "/getusrdata",
       dataType: "json",
       cache: false,
       success: function (usrdata) {
-        this.setState({ usrdata: usrdata });
+        this.setState({ usrdataSS: usrdata });
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
       }.bind(this),
     });
   },
+  // Check to see if items from database are mounted 
   componentDidMount: function () {
     this.loadPlrData();
     this.loadUsrData();
@@ -72,40 +81,48 @@ var Reservationform = React.createClass({
   handleSubmit: function (e) {
     e.preventDefault();
 
-    var reservationdate = this.state.reservationdate.trim();
-    var reservationtime = this.state.reservationtime.trim();
-    var playerid = plrnum.value;
-    var userid = usrnum.value;
+    // Assign the values from the text inputs to variables
+    var reservationdateSS = this.state.reservationdateSS.trim();
+    var reservationtimeSS = this.state.reservationtimeSS.trim();
+    var playeridSS = plrnumSS.value;
+    var useridSS = usrnumSS.value;
 
-    if (!reservationdate || !reservationtime || !playerid) {
+    // Check to see if inputs are missing
+    if (!reservationdateSS || !reservationtimeSS || !playeridSS) {
       console.log("Field Missing");
       return;
     }
 
+    // Use the information form inputs and submit them to database
     this.props.onReservationSubmit({
-      reservationdate: reservationdate,
-      reservationtime: reservationtime,
-      playerid: playerid,
-      userid: userid,
+      reservationdateSS: reservationdateSS,
+      reservationtimeSS: reservationtimeSS,
+      playeridSS: playeridSS,
+      useridSS: useridSS,
     });
   },
+  // Set validation for inputs with emails
   validateEmail: function (value) {
     var re =
       /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(value);
   },
+  // Set validation for inputs with money
   validateDollars: function (value) {
     var regex = /^\$?[0-9]+(\.[0-9][0-9])?$/;
     return regex.test(value);
   },
+  // Set validation for common inputs
   commonValidate: function () {
     return true;
   },
+  // Set the value to variable when changed
   setValue: function (field, event) {
     var object = {};
     object[field] = event.target.value;
     this.setState(object);
   },
+  // Display Form
   render: function () {
     return (
       <form className="form_area" onSubmit={this.handleSubmit}>
@@ -114,51 +131,56 @@ var Reservationform = React.createClass({
           <table className="form_table">
             <tbody>
               <tr>
+                {/* Display the Reservation Date so the player can input a date */}
                 <th>Reservation Date</th>
                 <td>
                   <DateInput
-                    value={this.state.reservationdate}
+                    value={this.state.reservationdateSS}
                     uniqueName="reservationdate"
                     textArea={false}
                     required={true}
                     minCharacters={3}
                     validate={this.commonValidate}
-                    onChange={this.setValue.bind(this, "reservationdate")}
+                    onChange={this.setValue.bind(this, "reservationdateSS")}
                     errorMessage="Reservation Date is invalid"
                     emptyMessage="Reservation Date is Required"
                   />
                 </td>
               </tr>
               <tr>
+                {/* Display the Reservation Time so the player can input a time */}
                 <th>Reservation Time</th>
                 <td>
                   <TimeInput
-                    value={this.state.reservationtime}
+                    value={this.state.reservationtimeSS}
                     uniqueName="reservationtime"
                     textArea={false}
                     required={true}
                     minCharacters={3}
                     validate={this.commonValidate}
-                    onChange={this.setValue.bind(this, "reservationtime")}
+                    onChange={this.setValue.bind(this, "reservationtimeSS")}
                     errorMessage="Reservation Time is invalid"
                     emptyMessage="Reservation Time is Required"
                   />
                 </td>
               </tr>
+              {/* Display PlayerList to show the Players at TCTG so player can select a player*/}
               <tr>
                 <th>Reservation Player</th>
                 <td>
-                  <PlayerList data={this.state.plrdata} />
+                  <PlayerList data={this.state.plrdataSS} />
                 </td>
               </tr>
+              {/* Display UserList to show the Users at TCTG so player can select a  user */}
               <tr>
                 <th>Reservation User</th>
                 <td>
-                  <UserList data={this.state.usrdata} />
+                  <UserList data={this.state.usrdataSS} />
                 </td>
               </tr>
             </tbody>
           </table>
+          {/* Show Submit Button and allow player to interact with it to submit information */}
           <input
             type="submit"
             className="form_submit"
@@ -170,12 +192,15 @@ var Reservationform = React.createClass({
   },
 });
 
+// Create a new class for Input Error to display any errors
+// that an Input may have
 var InputError = React.createClass({
   getInitialState: function () {
     return {
       message: "Input is invalid",
     };
   },
+  // Display the Input Error onto Page
   render: function () {
     var errorClass = classNames(this.props.className, {
       error_container: true,
@@ -187,6 +212,8 @@ var InputError = React.createClass({
   },
 });
 
+// Create a new class for DateInput component 
+// to allow the user/player to enter in a Date   
 var DateInput = React.createClass({
   getInitialState: function () {
     return {
@@ -198,6 +225,7 @@ var DateInput = React.createClass({
     };
   },
 
+  // Handle the change when user/player interacts with Date Picker
   handleChange: function (event) {
     this.validation(event.target.value);
 
@@ -206,6 +234,7 @@ var DateInput = React.createClass({
     }
   },
 
+  // Validate if the value in the Date Picker it valid or not
   validation: function (value, valid) {
     if (typeof valid === "undefined") {
       valid = true;
@@ -214,6 +243,7 @@ var DateInput = React.createClass({
     var message = "";
     var errorVisible = false;
 
+    // If the value is not valid in the date picker show an error
     if (!valid) {
       message = this.props.errorMessage;
       valid = false;
@@ -228,6 +258,7 @@ var DateInput = React.createClass({
       errorVisible = true;
     }
 
+    // Set the value 
     this.setState({
       value: value,
       isEmpty: jQuery.isEmptyObject(value),
@@ -241,6 +272,7 @@ var DateInput = React.createClass({
     var valid = this.props.validate(event.target.value);
     this.validation(event.target.value, valid);
   },
+  // Display the DatePicker onto Page
   render: function () {
     return (
       <div className={this.props.uniqueName}>
@@ -331,8 +363,8 @@ var TimeInput = React.createClass({
           onBlur={this.handleBlur}
           value={this.props.value}
           step="480"
-          min="10:00"
-          max="18:00"
+          min="08:00"
+          max="16:00"
         />
 
         <InputError
@@ -344,6 +376,7 @@ var TimeInput = React.createClass({
   },
 });
 
+// A list to select a Player from database
 var PlayerList = React.createClass({
   render: function () {
     var optionNodes = this.props.data.map(function (plrID) {
@@ -354,13 +387,14 @@ var PlayerList = React.createClass({
       );
     });
     return (
-      <select name="plrnum" id="plrnum">
+      <select name="plrnumSS" id="plrnumSS">
         {optionNodes}
       </select>
     );
   },
 });
 
+// A list to select a User from database
 var UserList = React.createClass({
   render: function () {
     var optionNodes = this.props.data.map(function (usrID) {
@@ -371,11 +405,12 @@ var UserList = React.createClass({
       );
     });
     return (
-      <select name="usrnum" id="usrnum">
+      <select name="usrnumSS" id="usrnumSS">
         {optionNodes}
       </select>
     );
   },
 });
 
+// Place Entire file into content to display on HTML page 
 ReactDOM.render(<ReservationBox />, document.getElementById("content"));

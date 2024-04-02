@@ -10,7 +10,7 @@ var PlayerBox = React.createClass({
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
-      }.bind(this)
+      }.bind(this),
     });
   },
   render: function () {
@@ -26,30 +26,46 @@ var PlayerBox = React.createClass({
 var Playerform = React.createClass({
   getInitialState: function () {
     return {
-      playerfirstnameSS: "",
-      playerlastnameSS: "",
-      playeremailSS: "",
-      playerphoneSS: ""
+      playerfirstname: "",
+      playerlastname: "",
+      playeremail: "",
+      playerphone: "",
+      playerrewards: "",
+      playerpw: "",
+      playerpw2: "",
     };
   },
   handleSubmit: function (e) {
     e.preventDefault();
 
-    var playerfirstnameSS = this.state.playerfirstnameSS.trim();
-    var playerlastnameSS = this.state.playerlastnameSS.trim();
-    var playeremailSS = this.state.playeremailSS.trim();
-    var playerphoneSS = this.state.playerphoneSS.trim();
+    var playerfirstname = this.state.playerfirstname.trim();
+    var playerlastname = this.state.playerlastname.trim();
+    var playeremail = this.state.playeremail.trim();
+    var playerphone = this.state.playerphone.trim();
+    var playerrewards = rewardnum.value;
+    var playerpw = this.state.playerpw.trim();
+    var playerpw2 = this.state.playerpw2.trim();
 
-    if (!playerfirstnameSS || !playerlastnameSS || !playeremailSS) {
+    if (!this.validateEmail(playeremail)) {
+      console.log("Bad Email " + this.validateEmail(playeremail));
+      return;
+    }
+    if (!playerfirstname || !playerlastname || !playeremail) {
       console.log("Field Missing");
+      return;
+    }
+    if (playerpw != playerpw2) {
+      alert("Passwords do not match!!!");
       return;
     }
 
     this.props.onPlayerSubmit({
-      playerfirstnameSS: playerfirstnameSS,
-      playerlastnameSS: playerlastnameSS,
-      playeremailSS: playeremailSS,
-      playerphoneSS: playerphoneSS
+      playerfirstname: playerfirstname,
+      playerlastname: playerlastname,
+      playeremail: playeremail,
+      playerphone: playerphone,
+      playerrewards: playerrewards,
+      playerpw: playerpw,
     });
   },
   validateEmail: function (value) {
@@ -79,7 +95,7 @@ var Playerform = React.createClass({
               <th>Player First Name</th>
               <td>
                 <TextInput
-                  value={this.state.playerfirstnameSS}
+                  value={this.state.playerfirstname}
                   uniqueName="playerfirstname"
                   textArea={false}
                   required={true}
@@ -95,7 +111,7 @@ var Playerform = React.createClass({
               <th>Player Last Name</th>
               <td>
                 <TextInput
-                  value={this.state.playerlastnameSS}
+                  value={this.state.playerlastname}
                   uniqueName="playerlastname"
                   textArea={false}
                   required={true}
@@ -111,7 +127,7 @@ var Playerform = React.createClass({
               <th>Player Email</th>
               <td>
                 <TextInput
-                  value={this.state.playeremailSS}
+                  value={this.state.playeremail}
                   uniqueName="playeremail"
                   textArea={false}
                   required={false}
@@ -126,7 +142,7 @@ var Playerform = React.createClass({
               <th>Player Phone</th>
               <td>
                 <TextInput
-                  value={this.state.playerphoneSS}
+                  value={this.state.playerphone}
                   uniqueName="playerphone"
                   textArea={false}
                   required={false}
@@ -137,9 +153,49 @@ var Playerform = React.createClass({
                 />
               </td>
             </tr>
+            <tr>
+              <th>Player Rewards Tier</th>
+              <td>
+                <RewardsList data={this.state.data} />
+              </td>
+            </tr>
+            <tr>
+              <th>Player Password</th>
+              <td>
+                <TextInput
+                  inputType="password"
+                  value={this.state.playerpw}
+                  uniqueName="playerpw"
+                  textArea={false}
+                  required={false}
+                  minCharacters={6}
+                  validate={this.commonValidate}
+                  onChange={this.setValue.bind(this, "playerpw")}
+                  errorMessage="Password is incorrect"
+                  emptyMessage="Password is required"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Player Password Confirm</th>
+              <td>
+                <TextInput
+                  inputType="password"
+                  value={this.state.playerpw2}
+                  uniqueName="playerpw2"
+                  textArea={false}
+                  required={false}
+                  minCharacters={6}
+                  validate={this.commonValidate}
+                  onChange={this.setValue.bind(this, "playerpw2")}
+                  errorMessage="Password is incorrect"
+                  emptyMessage="Password is required"
+                />
+              </td>
+            </tr>
           </tbody>
         </table>
-        <input type="submit" value="Insert Player"/>
+        <input type="submit" value="Insert Player" />
       </form>
     );
   },
@@ -238,6 +294,7 @@ var TextInput = React.createClass({
       return (
         <div className={this.props.uniqueName}>
           <input
+            type={this.props.inputType}
             name={this.props.uniqueName}
             id={this.props.uniqueName}
             placeholder={this.props.text}
@@ -254,6 +311,24 @@ var TextInput = React.createClass({
         </div>
       );
     }
+  },
+});
+
+var RewardsList = React.createClass({
+  render: function () {
+    return (
+      <select name="rewardnum" id="rewardnum">
+        <option key="1" value="Standard">
+          Standard
+        </option>
+        <option key="2" value="Plus">
+          Plus
+        </option>
+        <option key="3" value="Premium">
+          Premium
+        </option>
+      </select>
+    );
   },
 });
 
