@@ -1,18 +1,18 @@
-// User Box Element for Update User HTML Page
 var UserBox = React.createClass({
-  // Sets Initial State of data
   getInitialState: function () {
     return { data: [] };
   },
-  // Loads Users from Server into data
   loadUsersFromServer: function () {
+    console.log(userid.value);
     $.ajax({
-      url: "/getusr",
+      url: "/getuser",
       data: {
         userid: userid.value,
         userfirstname: userfirstname.value,
+        userlastname: userlastname.value,
         useremail: useremail.value,
         userphone: userphone.value,
+        userrole: rolenum.value,
       },
       dataType: "json",
       cache: false,
@@ -24,7 +24,6 @@ var UserBox = React.createClass({
       }.bind(this),
     });
   },
-  // Run Post API call to update selected user
   updateSingleUsrFromServer: function (user) {
     $.ajax({
       url: "/updatesingleusr",
@@ -39,41 +38,33 @@ var UserBox = React.createClass({
         console.error(this.props.url, status, err.toString());
       }.bind(this),
     });
-    // Reload Page
     window.location.reload(true);
   },
-  // When page is loaded, load Users from server
   componentDidMount: function () {
     this.loadUsersFromServer();
     // setInterval(this.loadUsersFromServer, this.props.pollInterval);
   },
-  // Renders User Box into HTML Page
+
   render: function () {
     return (
       <div>
         <h1>Update Users</h1>
-        {/* User Form Element with added parameter for load users on submit */}
         <Userform onUserSubmit={this.loadUsersFromServer} />
         <br />
-        {/* Results of Get API Call React Forms */}
         <div id="theresults">
-          {/* Left Table to display information about available users to update */}
           <div id="theleft">
             <table>
               <thead>
                 <tr>
-                  <th>Key</th>
                   <th>ID</th>
-                  <th>Name</th>
+                  <th>First Name</th>
                   <th>Email</th>
                   <th></th>
                 </tr>
               </thead>
-              {/* User List of available users to update */}
               <UserList data={this.state.data} />
             </table>
           </div>
-          {/* Individual User that will be updated */}
           <div id="theright">
             <UserUpdateform onUpdateSubmit={this.updateSingleUsrFromServer} />
           </div>
@@ -83,76 +74,55 @@ var UserBox = React.createClass({
   },
 });
 
-// User Form for User Box
 var Userform = React.createClass({
-  // Sets initial state of all user data
   getInitialState: function () {
     return {
-      userkey: "",
       userid: "",
       userfirstname: "",
+      userlastname: "",
       useremail: "",
       userphone: "",
-      data: [],
+      userrole: "",
     };
   },
-  // Handles change in select list
   handleOptionChange: function (e) {
     this.setState({
       selectedOption: e.target.value,
     });
   },
-  // Loads User Types on load
-  loadUsrTypes: function () {
-    $.ajax({
-      url: "/getusrtypes",
-      dataType: "json",
-      cache: false,
-      success: function (data) {
-        this.setState({ data: data });
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this),
-    });
-  },
-  // When page is ready, loads users
-  componentDidMount: function () {
-    this.loadUsrTypes();
-  },
-  // Handles form submit
   handleSubmit: function (e) {
     e.preventDefault();
 
     var userid = this.state.userid.trim();
-    var useremail = this.state.useremail.trim();
     var userfirstname = this.state.userfirstname.trim();
+    var userlastname = this.state.userlastname.trim();
+    var useremail = this.state.useremail.trim();
     var userphone = this.state.userphone.trim();
-    // On submit, use user-specified information
+    var userrole = this.state.userrole.trim();
+
     this.props.onUserSubmit({
       userid: userid,
       userfirstname: userfirstname,
+      userlastname: userlastname,
       useremail: useremail,
       userphone: userphone,
+      userrole: userrole,
     });
   },
-  // Handles changes in text inputs
   handleChange: function (event) {
     this.setState({
       [event.target.id]: event.target.value,
     });
   },
-  // Renders User Form
   render: function () {
     return (
       <div>
         <div id="theform">
           <form onSubmit={this.handleSubmit}>
-            <h2>Users</h2>
+            <h2>Search Through Users</h2>
             <table>
               <tbody>
                 <tr>
-                  {/* User ID Search */}
                   <th>User ID</th>
                   <td>
                     <input
@@ -165,8 +135,7 @@ var Userform = React.createClass({
                   </td>
                 </tr>
                 <tr>
-                  {/* User Name Search */}
-                  <th>User Name</th>
+                  <th>User First Name</th>
                   <td>
                     <input
                       name="userfirstname"
@@ -177,7 +146,17 @@ var Userform = React.createClass({
                   </td>
                 </tr>
                 <tr>
-                  {/* User Email Search */}
+                  <th>User Last Name</th>
+                  <td>
+                    <input
+                      name="userlastname"
+                      id="userlastname"
+                      value={this.state.userlastname}
+                      onChange={this.handleChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
                   <th>User Email</th>
                   <td>
                     <input
@@ -189,7 +168,6 @@ var Userform = React.createClass({
                   </td>
                 </tr>
                 <tr>
-                  {/* User Phone Search */}
                   <th>User Phone</th>
                   <td>
                     <input
@@ -200,9 +178,14 @@ var Userform = React.createClass({
                     />
                   </td>
                 </tr>
+                <tr>
+                  <th>User Roles Tier</th>
+                  <td>
+                    <RolesList data={this.state.data} />
+                  </td>
+                </tr>
               </tbody>
             </table>
-            {/* Updated User Submit */}
             <input type="submit" value="Search User" />
           </form>
         </div>
@@ -217,69 +200,47 @@ var Userform = React.createClass({
   },
 });
 
-// User Update Form for User Box
 var UserUpdateform = React.createClass({
-  // Sets Initial state for updated user information
   getInitialState: function () {
     return {
-      upuserkey: "",
       upuserid: "",
       upuserfirstname: "",
+      upuserlastname: "",
       upuseremail: "",
       upuserphone: "",
+      upuserrole: "",
       updata: [],
     };
   },
-  // Handles select list option change
   handleUpOptionChange: function (e) {
     this.setState({
       upselectedOption: e.target.value,
     });
   },
-  // Loads user types form database
-  loadUsrTypes: function () {
-    $.ajax({
-      url: "/getusrtypes",
-      dataType: "json",
-      cache: false,
-      success: function (data) {
-        this.setState({ updata: data });
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this),
-    });
-  },
-  // When page is ready, load user types
-  componentDidMount: function () {
-    this.loadUsrTypes();
-  },
-  // Handle form submit
   handleUpSubmit: function (e) {
     e.preventDefault();
 
-    var upuserkey = upusrkey.value;
     var upuserid = upusrid.value;
     var upuseremail = upusremail.value;
     var upuserfirstname = upusrfirstname.value;
+    var upuserlastname = upusrlastname.value;
     var upuserphone = upusrphone.value;
+    var upuserrole = uprolenum.value;
 
-    // Set props to user-specified information
     this.props.onUpdateSubmit({
-      upuserkey: upuserkey,
       upuserid: upuserid,
       upuserfirstname: upuserfirstname,
+      upuserlastname: upuserlastname,
       upuseremail: upuseremail,
       upuserphone: upuserphone,
+      upuserrole: upuserrole,
     });
   },
-  // Handles change in text inputs
   handleUpChange: function (event) {
     this.setState({
       [event.target.id]: event.target.value,
     });
   },
-  // Renders Update User Form
   render: function () {
     return (
       <div>
@@ -288,21 +249,7 @@ var UserUpdateform = React.createClass({
             <table>
               <tbody>
                 <tr>
-                  {/* User ID Change */}
-                  <th>User ID</th>
-                  <td>
-                    <input
-                      type="text"
-                      name="upusrid"
-                      id="upusrid"
-                      value={this.state.upusrid}
-                      onChange={this.state.handleUpChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  {/* User Name Change */}
-                  <th>User Name</th>
+                  <th>User First Name</th>
                   <td>
                     <input
                       name="upusrfirstname"
@@ -313,7 +260,17 @@ var UserUpdateform = React.createClass({
                   </td>
                 </tr>
                 <tr>
-                  {/* User Email Change */}
+                  <th>User Last Name</th>
+                  <td>
+                    <input
+                      name="upusrlastname"
+                      id="upusrlastname"
+                      value={this.state.upusrlastname}
+                      onChange={this.state.handleUpChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
                   <th>User Email</th>
                   <td>
                     <input
@@ -325,7 +282,6 @@ var UserUpdateform = React.createClass({
                   </td>
                 </tr>
                 <tr>
-                  {/* User Phone Change */}
                   <th>User Phone</th>
                   <td>
                     <input
@@ -336,14 +292,19 @@ var UserUpdateform = React.createClass({
                     />
                   </td>
                 </tr>
+                <tr>
+                  <th>User Roles Tier</th>
+                  <td>
+                    <UpRolesList data={this.state.updata} />
+                  </td>
+                </tr>
               </tbody>
             </table>
             <br />
-            {/* Submit User Input */}
             <input
               type="hidden"
-              name="upusrkey"
-              id="upusrkey"
+              name="upusrid"
+              id="upusrid"
               onChange={this.handleUpChange}
             />
             <input type="submit" value="Update User" />
@@ -354,17 +315,18 @@ var UserUpdateform = React.createClass({
   },
 });
 
-// User List for The Left Table of Available users to update
 var UserList = React.createClass({
   render: function () {
     var userNodes = this.props.data.map(function (user) {
       return (
         <User
-          key={user.dbuserkey}
-          usrkey={user.dbuserkey}
-          usrid={user.dbuserid}
-          usrfirstname={user.dbuserfirstname}
-          usremail={user.dbuseremail}
+          key={user.dbuser_id}
+          usrid={user.dbuser_id}
+          usrfirstname={user.dbuser_firstname}
+          usrlastname={user.dbuser_lastname}
+          usremail={user.dbuser_email}
+          usrphone={user.dbuser_phone}
+          usrrole={user.dbuser_role}
         ></User>
       );
     });
@@ -374,28 +336,24 @@ var UserList = React.createClass({
   },
 });
 
-// User Class to initialize a user object react component
 var User = React.createClass({
-  // Sets initial state of user
   getInitialState: function () {
     return {
-      upusrkey: "",
+      upusrid: "",
       singledata: [],
     };
   },
-  // updates record of specified user
   updateRecord: function (e) {
     e.preventDefault();
-    var theupusrkey = this.props.usrkey;
+    var theupusrid = this.props.usrid;
 
-    this.loadSingleUsr(theupusrkey);
+    this.loadSingleUsr(theupusrid);
   },
-  // Loads queried user from the database
-  loadSingleUsr: function (theupusrkey) {
+  loadSingleUsr: function (theupusrid) {
     $.ajax({
       url: "/getsingleusr",
       data: {
-        upusrkey: theupusrkey,
+        upusrid: theupusrid,
       },
       dataType: "json",
       cache: false,
@@ -403,12 +361,12 @@ var User = React.createClass({
         this.setState({ singledata: data });
         console.log(this.state.singledata);
         var populateUsr = this.state.singledata.map(function (user) {
-          upusrkey.value = theupusrkey;
-          upusremail.value = user.dbuseremail;
-          upusrid.value = user.dbuserid;
-          upusrphone.value = user.dbuserphone;
-          upusrsalary.value = user.dbusersalary;
-          upusrfirstname.value = user.dbuserfirstname;
+          upusrid.value = theupusrid;
+          upusrfirstname.value = user.dbuser_firstname;
+          upusrlastname.value = user.dbuser_lastname;
+          upusremail.value = user.dbuser_email;
+          upusrphone.value = user.dbuser_phone;
+          uprolenum.value = user.dbuser_role;
         });
       }.bind(this),
       error: function (xhr, status, err) {
@@ -416,11 +374,10 @@ var User = React.createClass({
       }.bind(this),
     });
   },
-  // Renders the User as an HTMl segment
+
   render: function () {
     return (
       <tr>
-        <td>{this.props.usrkey}</td>
         <td>{this.props.usrid}</td>
         <td>{this.props.usrfirstname}</td>
         <td>{this.props.usremail}</td>
@@ -434,41 +391,45 @@ var User = React.createClass({
   },
 });
 
-// Select List for Spefified User type
-var SelectList = React.createClass({
+var RolesList = React.createClass({
   render: function () {
-    var optionNodes = this.props.data.map(function (usrTypes) {
-      return (
-        <option key={usrTypes.dbusrtypeid} value={usrTypes.dbusrtypeid}>
-          {usrTypes.dbusrtypefirstname}
-        </option>
-      );
-    });
     return (
-      <select name="usrtype" id="usrtype">
-        <option value="0"></option>
-        {optionNodes}
+      <select name="rolenum" id="rolenum">
+        <option key="0" value="">
+          --
+        </option>
+        <option key="1" value="Manager">
+          Manager
+        </option>
+        <option key="2" value="Front-Desk">
+          Front-Desk
+        </option>
+        <option key="3" value="Assistant">
+          Assistant
+        </option>
       </select>
     );
   },
 });
-// Update List User type
-var SelectUpdateList = React.createClass({
+var UpRolesList = React.createClass({
   render: function () {
-    var optionNodes = this.props.data.map(function (usrTypes) {
-      return (
-        <option key={usrTypes.dbusrtypeid} value={usrTypes.dbusrtypeid}>
-          {usrTypes.dbusrtypefirstname}
-        </option>
-      );
-    });
     return (
-      <select name="upusrtype" id="upusrtype">
-        <option value="0"></option>
-        {optionNodes}
+      <select name="uprolenum" id="uprolenum">
+        <option key="0" value="">
+          --
+        </option>
+        <option key="1" value="Manager">
+          Manager
+        </option>
+        <option key="2" value="Front-Desk">
+          Front-Desk
+        </option>
+        <option key="3" value="Assistant">
+          Assistant
+        </option>
       </select>
     );
   },
 });
-// Renders User Box
+
 ReactDOM.render(<UserBox />, document.getElementById("content"));

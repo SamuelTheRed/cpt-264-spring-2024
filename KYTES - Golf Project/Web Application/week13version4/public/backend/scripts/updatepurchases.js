@@ -2,40 +2,28 @@ var PurchaseBox = React.createClass({
     getInitialState: function () {
         return { data: [] };
     },
+    // Load all purchases items from the database
     loadPurchasesFromServer: function () {
-
-        var emailervalue = 2;
-        if (purmaileryes.checked) {
-            emailervalue = 1;
-        } 
-        if (purmailerno.checked) {
-            emailervalue = 0;
-        }
-        console.log(emailervalue);
-        $.ajax({
-            url: '/getpur',
-            data: {
-                'purchaseid': purchaseid.value,
-                'purchasename': purchasename.value,
-                'purchaseemail': purchaseemail.value,
-                'purchasephone': purchasephone.value,
-                'purchasesalary': purchasesalary.value,
-                'purchasemailer': emailervalue,
-                'purchasetype': purtype.value
-            },
-            
-            dataType: 'json',
-            cache: false,
-            success: function (data) {
-                this.setState({ data: data });
-            }.bind(this),
-            error: function (xhr, status, err) {
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
-
+      console.log(purchaseid.value);
+      $.ajax({
+        url: "/getpurchase",
+        // Stores the data
+        data: {
+          purchaseid: purchaseid.value,
+          purchaseinformation: statusnum.value,
+          purchasedatetime: purchasedatetime.value,
+        },
+        dataType: "json",
+        cache: false,
+        success: function (data) {
+          this.setState({ data: data });
+        }.bind(this),
+        error: function (xhr, status, err) {
+          console.error(this.props.url, status, err.toString());
+        }.bind(this),
+      });
     },
-    updateSingleEmpFromServer: function (purchase) {
+    updateSinglePurFromServer: function (purchase) {
         
         $.ajax({
             url: '/updatesinglepur',
@@ -61,7 +49,7 @@ var PurchaseBox = React.createClass({
         return (
             <div>
                 <h1>Update Purchases</h1>
-                <Purchaseform2 onPurchaseSubmit={this.loadPurchasesFromServer} />
+                <Purchaseform onPurchaseSubmit={this.loadPurchasesFromServer} />
                 <br />
                 <div id = "theresults">
                     <div id = "theleft">
@@ -79,7 +67,7 @@ var PurchaseBox = React.createClass({
                     </table>
                     </div>
                     <div id="theright">
-                        <PurchaseUpdateform onUpdateSubmit={this.updateSingleEmpFromServer} />
+                        <PurchaseUpdateform onUpdateSubmit={this.updateSinglePurFromServer} />
                     </div>                
                 </div>
             </div>
@@ -87,7 +75,7 @@ var PurchaseBox = React.createClass({
     }
 });
 
-var Purchaseform2 = React.createClass({
+var Purchaseform = React.createClass({
     getInitialState: function () {
         return {
             purchasekey: "",
@@ -105,7 +93,7 @@ var Purchaseform2 = React.createClass({
             selectedOption: e.target.value
         });
     },
-    loadEmpTypes: function () {
+    loadPurTypes: function () {
         $.ajax({
             url: '/getpurtypes',
             dataType: 'json',
@@ -119,7 +107,7 @@ var Purchaseform2 = React.createClass({
         });
     },
     componentDidMount: function() {
-        this.loadEmpTypes();
+        this.loadPurTypes();
     },
 
     handleSubmit: function (e) {
@@ -251,7 +239,7 @@ var PurchaseUpdateform = React.createClass({
             upselectedOption: e.target.value
         });
     },
-    loadEmpTypes: function () {
+    loadPurTypes: function () {
         $.ajax({
             url: '/getpurtypes',
             dataType: 'json',
@@ -265,7 +253,7 @@ var PurchaseUpdateform = React.createClass({
         });
     },
     componentDidMount: function () {
-        this.loadEmpTypes();
+        this.loadPurTypes();
 
     },
     handleUpSubmit: function (e) {
@@ -415,9 +403,9 @@ var Purchase = React.createClass({
         e.preventDefault();
         var theuppurkey = this.props.purkey;
         
-        this.loadSingleEmp(theuppurkey);
+        this.loadSinglePur(theuppurkey);
     },
-    loadSingleEmp: function (theuppurkey) {
+    loadSinglePur: function (theuppurkey) {
         $.ajax({
             url: '/getsinglepur',
             data: {
@@ -428,7 +416,7 @@ var Purchase = React.createClass({
             success: function (data) {
                 this.setState({ singledata: data });
                 console.log(this.state.singledata);
-                var populateEmp = this.state.singledata.map(function (purchase) {
+                var populatePur = this.state.singledata.map(function (purchase) {
                     uppurkey.value = theuppurkey;
                     uppuremail.value = purchase.dbpurchaseemail;
                     uppurid.value = purchase.dbpurchaseid;
