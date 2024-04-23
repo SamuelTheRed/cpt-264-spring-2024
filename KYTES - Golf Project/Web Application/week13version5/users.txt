@@ -1,2 +1,0 @@
-Frontend - player@user.com
-Backend - user@user.com
